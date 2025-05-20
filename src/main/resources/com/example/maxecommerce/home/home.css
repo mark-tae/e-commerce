@@ -1,0 +1,113 @@
+/* DaisyUI-inspired styles for homepage */
+.home-container {
+    -fx-background-color: #f1f5f9; /* Light gray background */
+    -fx-padding: 24px;
+}
+
+.home-card {
+    -fx-background-color: #ffffff;
+    -fx-border-radius: 12px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 12, 0, 0, 4);
+    -fx-padding: 16px;
+}
+
+.home-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1f2937; /* Dark gray */
+}
+
+.home-subtitle {
+    -fx-font-size: 16px;
+    -fx-text-fill: #6b7280; /* Gray */
+}
+
+.home-product-card {
+    -fx-background-color: #ffffff;
+    -fx-border-radius: 12px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 12, 0, 0, 4);
+    -fx-padding: 16px;
+    -fx-alignment: center;
+    -fx-pref-width: 200px;
+    -fx-pref-height: 250px;
+}
+
+.home-product-name {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1f2937;
+}
+
+.home-product-description {
+    -fx-font-size: 14px;
+    -fx-text-fill: #6b7280;
+    -fx-wrap-text: true;
+}
+
+.home-product-price {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #10b981; /* Green */
+}
+
+.home-product-discount {
+    -fx-font-size: 14px;
+    -fx-text-fill: #ef4444; /* Red */
+}
+
+.home-product-stock {
+    -fx-font-size: 14px;
+    -fx-text-fill: #1f2937;
+}
+
+.home-product-stock-low {
+    -fx-font-size: 14px;
+    -fx-text-fill: #ef4444; /* Red */
+}
+
+.home-product-image-placeholder {
+    -fx-background-color: #e5e7eb; /* Light gray */
+    -fx-border-radius: 8px;
+}
+
+.home-btn-primary {
+    -fx-background-color: #10b981;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+    -fx-border-radius: 8px;
+    -fx-padding: 10px 20px;
+    -fx-cursor: hand;
+}
+
+.home-btn-primary:hover {
+    -fx-background-color: #059669; /* Darker green */
+}
+
+.home-btn-outline {
+    -fx-background-color: transparent;
+    -fx-text-fill: #6b7280;
+    -fx-font-weight: bold;
+    -fx-border-color: #6b7280;
+    -fx-border-width: 2px;
+    -fx-border-radius: 8px;
+    -fx-padding: 10px 20px;
+    -fx-cursor: hand;
+}
+
+.home-btn-outline:hover {
+    -fx-background-color: #6b7280;
+    -fx-text-fill: #ffffff;
+}
+
+.home-btn-small {
+    -fx-background-color: #10b981;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+    -fx-border-radius: 8px;
+    -fx-padding: 8px 16px;
+    -fx-cursor: hand;
+}
+
+.home-btn-small:hover {
+    -fx-background-color: #059669;
+}

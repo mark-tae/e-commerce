@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane fx:id="rootPane" styleClass="home-container" stylesheets="@home.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.maxecommerce.controller.HomeController">
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20" styleClass="home-card">
+            <padding>
+                <Insets top="10" right="20" bottom="10" left="20"/>
+            </padding>
+            <Text text="Max E-Commerce" styleClass="home-title"/>
+            <Label fx:id="userGreeting" text="Welcome!" styleClass="home-subtitle"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="shopButton" text="Shop Now" styleClass="home-btn-primary" onAction="#goToShop"/>
+<!--            <Button fx:id="cartButton" text="View Cart" styleClass="home-btn-primary" onAction="#showCart"/>-->
+            <Button fx:id="logoutButton" text="Logout" styleClass="home-btn-outline" onAction="#handleLogout"/>
+        </HBox>
+    </top>
+    <center>
+        <VBox spacing="20" alignment="CENTER" styleClass="home-card">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <Text text="Welcome to Max E-Commerce" styleClass="home-title"/>
+            <Text text="Discover our featured products" styleClass="home-subtitle"/>
+            <GridPane fx:id="productGrid" hgap="20" vgap="20" alignment="CENTER"/>
+        </VBox>
+    </center>
+</BorderPane>

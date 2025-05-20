@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox fx:id="cartForm" styleClass="cart-form" spacing="10" alignment="CENTER" stylesheets="@cart.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.maxecommerce.controller.CartController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label fx:id="cartLabel" text="Your Cart" styleClass="cart-label"/>
+
+    <TableView fx:id="cartTable" styleClass="cart-table">
+        <columns>
+            <TableColumn fx:id="nameColumn" text="Product" prefWidth="200"/>
+            <TableColumn fx:id="quantityColumn" text="Quantity" prefWidth="100"/>
+            <TableColumn fx:id="priceColumn" text="Price" prefWidth="100"/>
+            <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="100"/>
+        </columns>
+    </TableView>
+
+    <Button fx:id="checkoutButton" text="Checkout" styleClass="product-btn-primary" onAction="#handleCheckout"/>
+</VBox>

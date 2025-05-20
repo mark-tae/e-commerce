@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane fx:id="rootPane" styleClass="product-container" stylesheets="@checkout.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.maxecommerce.controller.CheckoutController">
+    <center>
+        <VBox styleClass="checkout-form" alignment="CENTER" spacing="20">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <Text text="Checkout" styleClass="checkout-title"/>
+
+            <!-- Cart Items -->
+            <VBox spacing="10">
+                <Text text="Order Summary" styleClass="checkout-subtitle"/>
+                <TableView fx:id="cartTable" styleClass="checkout-table">
+                    <columns>
+                        <TableColumn fx:id="nameColumn" text="Product"/>
+                        <TableColumn fx:id="quantityColumn" text="Quantity"/>
+                        <TableColumn fx:id="priceColumn" text="Price"/>
+                        <TableColumn fx:id="subtotalColumn" text="Subtotal"/>
+                    </columns>
+                </TableView>
+                <Text fx:id="totalAmountText" styleClass="product-price"/>
+            </VBox>
+
+            <!-- Payment Method -->
+            <VBox spacing="10">
+                <Text text="Payment Method" styleClass="checkout-subtitle"/>
+                <RadioButton fx:id="codRadio" text="Cash on Delivery" toggleGroup="$paymentGroup" styleClass="payment-option" selected="true"/>
+                <RadioButton fx:id="digitalWalletRadio" text="Digital Wallet" toggleGroup="$paymentGroup" styleClass="payment-option"/>
+            </VBox>
+
+            <!-- Actions -->
+            <HBox spacing="20" alignment="CENTER">
+                <Button fx:id="confirmButton" text="Confirm Order" styleClass="product-btn-primary" onAction="#confirmOrder"/>
+                <Button fx:id="cancelButton" text="Cancel" styleClass="product-btn-secondary" onAction="#cancelCheckout"/>
+            </HBox>
+        </VBox>
+    </center>
+</BorderPane>

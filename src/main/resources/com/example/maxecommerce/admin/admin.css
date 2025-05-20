@@ -1,0 +1,127 @@
+
+    /* Root styles */
+.root {
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-background-color: #f5f5f5;
+}
+
+/* Header */
+.dashboard-header {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 15px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);
+}
+
+.dashboard-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #212121;
+    -fx-padding: 0 0 10 0;
+}
+
+/* Content */
+.dashboard-content {
+    -fx-background-color: #ffffff;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0, 0, 2);
+}
+
+/* Table */
+.dashboard-table {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+.dashboard-table .column-header {
+    -fx-background-color: #f5f5f5;
+    -fx-border-color: #e0e0e0;
+    -fx-font-weight: bold;
+    -fx-text-fill: #424242;
+}
+
+.dashboard-table .table-row-cell {
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 0 0 1 0;
+}
+
+.dashboard-table .table-row-cell:hover {
+    -fx-background-color: #e3f2fd;
+}
+
+.dashboard-table .table-cell {
+    -fx-padding: 10px;
+    -fx-text-fill: #212121;
+}
+
+/* Buttons */
+.dashboard-btn {
+    -fx-background-color: #0288d1;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-padding: 8px 16px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+}
+
+.dashboard-btn:hover {
+    -fx-background-color: #0277bd;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 2);
+}
+
+.dashboard-btn:pressed {
+    -fx-background-color: #01579b;
+}
+
+/* ComboBox */
+.dashboard-combo {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #bdbdbd;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 5px;
+}
+
+.dashboard-combo:hover {
+    -fx-border-color: #0288d1;
+}
+
+/* Labels */
+.dashboard-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #424242;
+}
+
+/* Card for dialogs */
+.dashboard-card {
+    -fx-background-color: #ffffff;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 20px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);
+}
+
+/* Dialog */
+.dialog-pane {
+    -fx-background-color: #f5f5f5;
+}
+
+.dialog-pane .content {
+    -fx-padding: 10px;
+}
+
+.dialog-pane .button-bar .button {
+    -fx-background-color: #0288d1;
+    -fx-text-fill: #ffffff;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.dialog-pane .button-bar .button:hover {
+    -fx-background-color: #0277bd;
+}

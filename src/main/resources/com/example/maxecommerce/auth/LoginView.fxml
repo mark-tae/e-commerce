@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox alignment="CENTER" spacing="20" styleClass="auth-card" maxWidth="400" stylesheets="@auth.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.maxecommerce.controller.LoginController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+    <Text text="Login" styleClass="auth-title"/>
+    <VBox spacing="15">
+        <TextField fx:id="emailField" promptText="Email" styleClass="auth-form-control"/>
+        <PasswordField fx:id="passwordField" promptText="Password" styleClass="auth-form-control"/>
+        <Button fx:id="loginButton" text="Login" styleClass="auth-btn-primary" onAction="#handleLogin"/>
+        <Button fx:id="registerButton" text="Register" styleClass="auth-btn-outline" onAction="#handleRegister"/>
+    </VBox>
+</VBox>

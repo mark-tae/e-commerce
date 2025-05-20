@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane fx:id="rootPane" styleClass="product-container" stylesheets="@product.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.maxecommerce.controller.ProductController">
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20" styleClass="product-header">
+            <padding>
+                <Insets top="10" right="20" bottom="10" left="20"/>
+            </padding>
+            <Text text="Shop Products" styleClass="product-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="cartButton" text="Cart" styleClass="product-nav-btn" onAction="#showCart"/>
+            <Button fx:id="dashboardButton" text="Dashboard" styleClass="product-nav-btn" onAction="#goToDashboard"/>
+            <Button fx:id="logoutButton" text="Logout" styleClass="product-nav-btn-outline" onAction="#handleLogout"/>
+        </HBox>
+    </top>
+    <center>
+        <ScrollPane fitToWidth="true">
+            <VBox spacing="20" styleClass="product-container">
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20"/>
+                </padding>
+                <Text text="Featured Products" styleClass="product-title"/>
+                <GridPane fx:id="productGrid" hgap="20" vgap="20" alignment="CENTER"/>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

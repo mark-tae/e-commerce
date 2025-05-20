@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane fx:id="rootPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.maxecommerce.controller.AdminDashboardController">
+    <top>
+        <HBox spacing="10" styleClass="dashboard-header">
+            <children>
+                <Label text="Admin Dashboard" styleClass="dashboard-title"/>
+                <ComboBox fx:id="statusFilter" prefWidth="150"/>
+                <ComboBox fx:id="typeFilter" prefWidth="150"/>
+                <Button fx:id="refreshButton" text="Refresh" styleClass="dashboard-btn-primary"/>
+                <Button fx:id="logoutButton" text="Logout" styleClass="dashboard-btn-danger" onAction="#handleLogout"/>
+            </children>
+            <padding>
+                <Insets top="10" right="20" bottom="10" left="20"/>
+            </padding>
+        </HBox>
+    </top>
+    <center>
+        <TableView fx:id="approvalTable" styleClass="dashboard-table">
+            <columns>
+                <TableColumn fx:id="requestIdColumn" text="Request ID" prefWidth="80"/>
+                <TableColumn fx:id="productIdColumn" text="Product ID" prefWidth="80"/>
+                <TableColumn fx:id="productNameColumn" text="Product Name" prefWidth="150"/>
+                <TableColumn fx:id="vendorIdColumn" text="Vendor ID" prefWidth="80"/>
+                <TableColumn fx:id="vendorColumn" text="Vendor" prefWidth="120"/>
+                <TableColumn fx:id="requestTypeColumn" text="Request Type" prefWidth="100"/>
+                <TableColumn fx:id="statusColumn" text="Status" prefWidth="100"/>
+                <TableColumn fx:id="adminCommentsColumn" text="Admin Comments" prefWidth="200"/>
+                <TableColumn fx:id="createdAtColumn" text="Created At" prefWidth="120"/>
+                <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="200"/>
+            </columns>
+        </TableView>
+    </center>
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+</BorderPane>

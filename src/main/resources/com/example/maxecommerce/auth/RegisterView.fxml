@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+<VBox alignment="CENTER" spacing="20" styleClass="auth-card" maxWidth="400" stylesheets="@auth.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.maxecommerce.controller.RegisterController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+    <Text text="Register" styleClass="auth-title"/>
+
+    <VBox spacing="15">
+        <TextField fx:id="emailField" promptText="Email" styleClass="auth-form-control"/>
+        <PasswordField fx:id="passwordField" promptText="Password" styleClass="auth-form-control"/>
+        <TextField fx:id="firstNameField" promptText="First Name" styleClass="auth-form-control"/>
+        <TextField fx:id="lastNameField" promptText="Last Name" styleClass="auth-form-control"/>
+        <TextField fx:id="addressField" promptText="Address" styleClass="auth-form-control"/>
+        <TextField fx:id="phoneField" promptText="Phone" styleClass="auth-form-control"/>
+        <ComboBox fx:id="roleComboBox" promptText="Select Role" styleClass="auth-form-control">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="customer" />
+                    <String fx:value="vendor" />
+                </FXCollections>
+            </items>
+        </ComboBox>
+        <Button fx:id="registerButton" text="Register" styleClass="auth-btn-primary" onAction="#handleRegister"/>
+        <Button fx:id="backButton" text="Back to Login" styleClass="auth-btn-outline" onAction="#handleBack"/>
+    </VBox>
+</VBox>

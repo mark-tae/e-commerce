@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane fx:id="rootPane" styleClass="dashboard-container" stylesheets="@vendor.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.maxecommerce.controller.VendorDashboardController">
+    <top>
+        <HBox styleClass="dashboard-header" alignment="CENTER_LEFT" spacing="20">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+            <Text text="Vendor Dashboard" styleClass="dashboard-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="backButton" text="Back" styleClass="dashboard-nav-btn" onAction="#handleBack"/>
+            <Button fx:id="logoutButton" text="Logout" styleClass="dashboard-nav-btn" onAction="#handleLogout"/>
+        </HBox>
+    </top>
+    <center>
+        <TabPane fx:id="tabPane">
+            <tabs>
+                <Tab text="Sales" closable="false">
+                    <TableView fx:id="salesTable" styleClass="dashboard-table">
+                        <columns>
+                            <TableColumn fx:id="orderIdColumn" text="Order ID" prefWidth="100"/>
+                            <TableColumn fx:id="customerColumn" text="Customer" prefWidth="150"/>
+                            <TableColumn fx:id="totalAmountColumn" text="Total (₱)" prefWidth="100"/>
+                            <TableColumn fx:id="salesStatusColumn" text="Status" prefWidth="100"/>
+                            <TableColumn fx:id="dateColumn" text="Date" prefWidth="150"/>
+                        </columns>
+                    </TableView>
+                </Tab>
+                <Tab text="Inventory" closable="false">
+                    <VBox spacing="10" alignment="TOP_CENTER">
+                        <padding>
+                            <Insets top="10" right="10" bottom="10" left="10"/>
+                        </padding>
+                        <Button fx:id="addProductButton" text="Add Product" styleClass="dashboard-btn-primary" onAction="#openAddProductForm"/>
+                        <TableView fx:id="inventoryTable" styleClass="dashboard-table">
+                            <columns>
+                                <TableColumn fx:id="productNameColumn" text="Product" prefWidth="150"/>
+                                <TableColumn fx:id="categoryColumn" text="Category" prefWidth="100"/>
+                                <TableColumn fx:id="priceColumn" text="Price (₱)" prefWidth="80"/>
+                                <TableColumn fx:id="stockColumn" text="Stock" prefWidth="80"/>
+                                <TableColumn fx:id="discountColumn" text="Discount (%)" prefWidth="80"/>
+                                <TableColumn fx:id="statusColumn" text="Status" prefWidth="80"/>
+                                <TableColumn fx:id="inventoryActionsColumn" text="Actions" prefWidth="120"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </Tab>
+                <Tab text="Earnings" closable="false">
+                    <VBox spacing="10" alignment="TOP_CENTER">
+                        <padding>
+                            <Insets top="10" right="10" bottom="10" left="10"/>
+                        </padding>
+                        <Text fx:id="totalEarningsText" styleClass="dashboard-earnings"/>
+                        <TableView fx:id="earningsTable" styleClass="dashboard-table">
+                            <columns>
+                                <TableColumn fx:id="monthColumn" text="Month" prefWidth="150"/>
+                                <TableColumn fx:id="earningsAmountColumn" text="Earnings (₱)" prefWidth="150"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </center>
+</BorderPane>

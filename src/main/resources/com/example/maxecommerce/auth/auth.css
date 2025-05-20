@@ -1,0 +1,86 @@
+/* DaisyUI-inspired styles for login and registration */
+.auth-card {
+    -fx-background-color: #ffffff;
+    -fx-border-radius: 12px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 12, 0, 0, 4);
+    -fx-padding: 24px;
+    -fx-background-color: #f1f5f9; /* Light background */
+}
+
+.auth-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1f2937;
+    -fx-alignment: center;
+    -fx-padding: 0 0 16px 0;
+}
+
+.auth-form-control {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d1d5db;
+    -fx-border-radius: 8px;
+    -fx-padding: 10px;
+    -fx-font-size: 14px;
+    -fx-border-width: 1px;
+}
+
+.auth-form-control:focused {
+    -fx-border-color: #10b981;
+    -fx-effect: dropshadow(gaussian, rgba(16,185,129,0.2), 8, 0, 0, 2);
+}
+
+.auth-btn-primary {
+    -fx-background-color: #10b981;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+    -fx-border-radius: 8px;
+    -fx-padding: 12px 24px;
+    -fx-transition: background-color 0.2s ease-in-out;
+}
+
+.auth-btn-primary:hover {
+    -fx-background-color: #059669;
+}
+
+.auth-btn-outline {
+    -fx-background-color: transparent;
+    -fx-border-color: #10b981;
+    -fx-text-fill: #10b981;
+    -fx-font-weight: bold;
+    -fx-border-radius: 8px;
+    -fx-padding: 12px 24px;
+    -fx-border-width: 2px;
+}
+
+.auth-btn-outline:hover {
+    -fx-background-color: #ecfdf5;
+}
+
+/* SweetAlert-inspired toast styles */
+.auth-toast {
+    -fx-background-radius: 8px;
+    -fx-padding: 12px 24px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);
+    -fx-alignment: center-left;
+}
+
+.auth-toast-success {
+    -fx-background-color: #10b981;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.auth-toast-error {
+    -fx-background-color: #ef4444;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.auth-toast-info {
+    -fx-background-color: #3b82f6;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
