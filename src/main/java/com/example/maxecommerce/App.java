@@ -1,6 +1,8 @@
 package com.example.maxecommerce;
 
-
+import com.example.maxecommerce.controller.HomeController;
+import com.example.maxecommerce.controller.LoginController;
+import com.example.maxecommerce.util.SessionManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,10 +15,20 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/com/example/maxecommerce/auth/LoginView.fxml")));
-        primaryStage.setTitle("E-Commerce Platform");
-        primaryStage.setScene(new Scene(root, 600, 400));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/maxecommerce/home/HomeView.fxml"));
+        Parent root = loader.load();
+        HomeController controller = loader.getController();
+        controller.setHostServices(getHostServices());
+        primaryStage.setTitle("Welcome!");
+        primaryStage.setScene(new Scene(root));
         primaryStage.show();
+    }
+
+    @Override
+    public void init() throws Exception {
+        super.init();
+        // Ensure SessionManager is initialized
+        SessionManager.getInstance();
     }
 
     public static void main(String[] args) {

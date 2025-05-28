@@ -1,103 +1,148 @@
-.dashboard-container {
-    -fx-background-color: #f4f4f4;
+.dashboard-header {
+    -fx-background-color: #2D3748;
+    -fx-text-fill: #FFFFFF;
+}
+.dashboard-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2D3748;
+}
+.dashboard-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #4A5568;
+}
+.dashboard-label-low {
+    -fx-font-size: 14px;
+    -fx-text-fill: #D32F2F;
+}
+.dashboard-label-strikethrough {
+    -fx-font-size: 12px;
+    -fx-text-fill: #718096;
+    -fx-strikethrough: true;
+}
+.dashboard-btn {
+    -fx-background-color: #4A5568;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 14px;
+    -fx-padding: 8 16;
+}
+.dashboard-btn:hover {
+    -fx-background-color: #2D3748;
+}
+.dashboard-text-field {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 4;
+    -fx-font-size: 14px;
+}
+.dashboard-card {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 8;
+    -fx-padding: 10;
+}
+.alert-success .header {
+    -fx-background-color: #2E7D32;
+    -fx-text-fill: #FFFFFF;
+}
+.alert-error .header {
+    -fx-background-color: #D32F2F;
+    -fx-text-fill: #FFFFFF;
 }
 
+
 .dashboard-header {
-    -fx-background-color: #ffffff;
-    -fx-border-color: #e0e0e0;
-    -fx-border-width: 0 0 1 0;
+    -fx-background-color: #2D3748;
+    -fx-padding: 10;
 }
 
 .dashboard-title {
     -fx-font-size: 24px;
-    -fx-font-weight: bold;
-    -fx-fill: #333333;
-}
-
-.dashboard-nav-btn {
-    -fx-background-color: #007bff;
-    -fx-text-fill: #ffffff;
-    -fx-font-size: 14px;
-    -fx-padding: 8 15;
-    -fx-background-radius: 5;
-}
-
-.dashboard-nav-btn:hover {
-    -fx-background-color: #0056b3;
-}
-
-.dashboard-table {
-    -fx-background-color: #ffffff;
-    -fx-border-color: #e0e0e0;
-}
-
-.dashboard-table .column-header {
-    -fx-background-color: #f8f9fa;
+    -fx-text-fill: #FFFFFF;
     -fx-font-weight: bold;
 }
 
-.dashboard-btn-primary {
-    -fx-background-color: #28a745;
-    -fx-text-fill: #ffffff;
+.dashboard-btn {
+    -fx-background-color: #4A5568;
+    -fx-text-fill: #FFFFFF;
     -fx-font-size: 14px;
-    -fx-padding: 8 15;
-    -fx-background-radius: 5;
+    -fx-padding: 5 10;
+    -fx-cursor: hand;
 }
 
-.dashboard-btn-primary:hover {
-    -fx-background-color: #218838;
-}
-
-.dashboard-btn-danger {
-    -fx-background-color: #dc3545;
-    -fx-text-fill: #ffffff;
-    -fx-font-size: 14px;
-    -fx-padding: 8 15;
-    -fx-background-radius: 5;
-}
-
-.dashboard-btn-danger:hover {
-    -fx-background-color: #c82333;
-}
-
-.dashboard-form {
-    -fx-background-color: #ffffff;
-    -fx-border-color: #e0e0e0;
-    -fx-border-width: 1;
-    -fx-background-radius: 5;
-}
-
-.dashboard-text-field {
-    -fx-background-color: #ffffff;
-    -fx-border-color: #ced4da;
-    -fx-border-width: 1;
-    -fx-background-radius: 3;
-    -fx-padding: 5;
+.dashboard-btn:hover {
+    -fx-background-color: #718096;
 }
 
 .dashboard-label {
     -fx-font-size: 14px;
+    -fx-text-fill: #2D3748;
+}
+
+.dashboard-combo-box {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E2E8F0;
+    -fx-font-size: 14px;
+}
+
+.dashboard-text-field {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E2E8F0;
+    -fx-font-size: 14px;
+}
+
+.dashboard-table {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E2E8F0;
+}
+
+.dashboard-tab-pane {
+    -fx-background-color: #F7FAFC;
+}
+
+.dashboard-card {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 10;
+}
+
+.dashboard-text-area {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E2E8F0;
+    -fx-font-size: 14px;
+}
+
+
+
+.alert {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 5;
+}
+
+.alert .header {
+    -fx-font-size: 16px;
     -fx-font-weight: bold;
     -fx-text-fill: #333333;
 }
 
-.dashboard-earnings {
-    -fx-font-size: 20px;
-    -fx-font-weight: bold;
-    -fx-fill: #28a745;
+.alert .content {
+    -fx-font-size: 14px;
+    -fx-text-fill: #555555;
 }
 
-.status-pending {
-    -fx-text-fill: #ffc107;
-    -fx-font-weight: bold;
+.alert .button {
+    -fx-background-color: #0288d1;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-padding: 5 10;
+    -fx-background-radius: 3;
+    -fx-cursor: hand;
 }
 
-.status-approved {
-    -fx-text-fill: #28a745;
-    -fx-font-weight: bold;
+.alert .button:hover {
+    -fx-background-color: #0277bd;
 }
 
-.status-rejected {
-    -fx-text-fill: #dc3545;
-    -fx-font-weight: bold;
-}

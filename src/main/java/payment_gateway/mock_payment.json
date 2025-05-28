@@ -1,0 +1,22 @@
+{
+  "credit_cards": [
+    {
+      "number": "4111111111111111",
+      "status": "success"
+    },
+    {
+      "number": "4000000000000002",
+      "status": "failed"
+    }
+  ],
+  "gcash": [
+    {
+      "phone": "09123456789",
+      "status": "success"
+    },
+    {
+      "phone": "09876543210",
+      "status": "failed"
+    }
+  ]
+}

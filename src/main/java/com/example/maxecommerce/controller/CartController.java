@@ -31,10 +31,18 @@ public class CartController {
     private Button checkoutButton;
 
     private ProductController productController;
+    private HomeController homeController;
     private List<CartItem> cartItems;
 
     public void initializeCart(ProductController productController, List<CartItem> cartItems) {
         this.productController = productController;
+        this.cartItems = cartItems;
+        setupTable();
+        loadCartItems();
+    }
+
+    public void initializeCart2(HomeController homeController, List<CartItem> cartItems) {
+        this.homeController = homeController;
         this.cartItems = cartItems;
         setupTable();
         loadCartItems();

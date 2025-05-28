@@ -1,39 +1,167 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
 
-<BorderPane fx:id="rootPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.maxecommerce.controller.AdminDashboardController">
+<BorderPane fx:id="rootPane" xmlns="http://javafx.com/javafx/17" stylesheets="@admin.css" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.maxecommerce.controller.AdminDashboardController">
     <top>
-        <HBox spacing="10" styleClass="dashboard-header">
+        <VBox styleClass="dashboard-header" spacing="10">
             <children>
                 <Label text="Admin Dashboard" styleClass="dashboard-title"/>
-                <ComboBox fx:id="statusFilter" prefWidth="150"/>
-                <ComboBox fx:id="typeFilter" prefWidth="150"/>
-                <Button fx:id="refreshButton" text="Refresh" styleClass="dashboard-btn-primary"/>
-                <Button fx:id="logoutButton" text="Logout" styleClass="dashboard-btn-danger" onAction="#handleLogout"/>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <children>
+                        <Button fx:id="logoutButton" text="Logout" onAction="#handleLogout" styleClass="dashboard-btn"/>
+                        <Label text="Status:" styleClass="dashboard-label"/>
+                        <ComboBox fx:id="statusFilter" prefWidth="150" styleClass="dashboard-combo-box"/>
+                        <Label text="Type:" styleClass="dashboard-label"/>
+                        <ComboBox fx:id="typeFilter" prefWidth="150" styleClass="dashboard-combo-box"/>
+                        <Button fx:id="refreshButton" text="Refresh" styleClass="dashboard-btn"/>
+                    </children>
+                    <padding>
+                        <Insets top="15" right="20" bottom="15" left="20"/>
+                    </padding>
+                </HBox>
+            </children>
+        </VBox>
+    </top>
+    <left>
+        <VBox fx:id="statsPane" styleClass="dashboard-card" spacing="15">
+            <children>
+                <Label fx:id="totalProductsLabel" text="Total Products: 0" styleClass="dashboard-label"/>
+                <Label fx:id="totalUsersLabel" text="Total Users: 0" styleClass="dashboard-label"/>
             </children>
             <padding>
-                <Insets top="10" right="20" bottom="10" left="20"/>
+                <Insets top="20" right="20" bottom="20" left="20"/>
             </padding>
-        </HBox>
-    </top>
+        </VBox>
+    </left>
     <center>
-        <TableView fx:id="approvalTable" styleClass="dashboard-table">
-            <columns>
-                <TableColumn fx:id="requestIdColumn" text="Request ID" prefWidth="80"/>
-                <TableColumn fx:id="productIdColumn" text="Product ID" prefWidth="80"/>
-                <TableColumn fx:id="productNameColumn" text="Product Name" prefWidth="150"/>
-                <TableColumn fx:id="vendorIdColumn" text="Vendor ID" prefWidth="80"/>
-                <TableColumn fx:id="vendorColumn" text="Vendor" prefWidth="120"/>
-                <TableColumn fx:id="requestTypeColumn" text="Request Type" prefWidth="100"/>
-                <TableColumn fx:id="statusColumn" text="Status" prefWidth="100"/>
-                <TableColumn fx:id="adminCommentsColumn" text="Admin Comments" prefWidth="200"/>
-                <TableColumn fx:id="createdAtColumn" text="Created At" prefWidth="120"/>
-                <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="200"/>
-            </columns>
-        </TableView>
+        <TabPane fx:id="mainTabs" styleClass="dashboard-tab-pane">
+            <tabs>
+                <Tab text="Product Approvals" closable="false">
+                    <content>
+                        <VBox spacing="10">
+                            <children>
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <children>
+                                        <TextField fx:id="searchField" promptText="Search by product or vendor..." prefWidth="300" styleClass="dashboard-text-field"/>
+                                        <Button fx:id="searchButton" text="Search" styleClass="dashboard-btn"/>
+                                    </children>
+                                    <padding>
+                                        <Insets top="10" right="10" bottom="10" left="10"/>
+                                    </padding>
+                                </HBox>
+                                <TableView fx:id="approvalTable" styleClass="dashboard-table">
+                                    <columns>
+                                        <TableColumn fx:id="requestIdColumn" text="Request ID" prefWidth="80"/>
+                                        <TableColumn fx:id="productIdColumn" text="Product ID" prefWidth="80"/>
+                                        <TableColumn fx:id="productNameColumn" text="Product Name" prefWidth="180"/>
+                                        <TableColumn fx:id="approvalUserIdColumn" text="User ID" prefWidth="80"/>
+                                        <TableColumn fx:id="vendorColumn" text="Vendor" prefWidth="140"/>
+                                        <TableColumn fx:id="requestTypeColumn" text="Request Type" prefWidth="100"/>
+                                        <TableColumn fx:id="statusColumn" text="Status" prefWidth="100"/>
+                                        <TableColumn fx:id="adminCommentsColumn" text="Admin Comments" prefWidth="220"/>
+                                        <TableColumn fx:id="createdAtColumn" text="Created At" prefWidth="140"/>
+                                        <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="200"/>
+                                    </columns>
+                                </TableView>
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+                <Tab text="Vendor Requests" closable="false">
+                    <content>
+                        <VBox spacing="10">
+                            <children>
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <children>
+                                        <TextField fx:id="vendorSearchField" promptText="Search by email..." prefWidth="300" styleClass="dashboard-text-field"/>
+                                        <Button fx:id="vendorSearchButton" text="Search" styleClass="dashboard-btn"/>
+                                    </children>
+                                    <padding>
+                                        <Insets top="10" right="10" bottom="10" left="10"/>
+                                    </padding>
+                                </HBox>
+                                <TableView fx:id="vendorRequestsTable" styleClass="dashboard-table">
+                                    <columns>
+                                        <TableColumn fx:id="vendorRequestIdColumn" text="Request ID" prefWidth="100"/>
+                                        <TableColumn fx:id="vendorUserIdColumn" text="User ID" prefWidth="100"/>
+                                        <TableColumn fx:id="vendorUserEmailColumn" text="User Email" prefWidth="200"/>
+                                        <TableColumn fx:id="vendorStatusColumn" text="Status" prefWidth="100"/>
+                                        <TableColumn fx:id="vendorCreatedAtColumn" text="Created At" prefWidth="140"/>
+                                        <TableColumn fx:id="vendorActionsColumn" text="Actions" prefWidth="200"/>
+                                    </columns>
+                                </TableView>
+                            </children>
+                            <padding>
+                                <Insets top="10" right="10" bottom="10" left="10"/>
+                            </padding>
+                        </VBox>
+                    </content>
+                </Tab>
+                <Tab text="User Monitoring" closable="false">
+                    <content>
+                        <VBox spacing="10">
+                            <children>
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <children>
+                                        <TextField fx:id="userSearchField" promptText="Search by name or email..." prefWidth="300" styleClass="dashboard-text-field"/>
+                                        <Button fx:id="userSearchButton" text="Search" styleClass="dashboard-btn"/>
+                                    </children>
+                                    <padding>
+                                        <Insets top="10" right="10" bottom="10" left="10"/>
+                                    </padding>
+                                </HBox>
+                                <TableView fx:id="userTable" styleClass="dashboard-table">
+                                    <columns>
+                                        <TableColumn fx:id="userIdColumn" text="User ID" prefWidth="80"/>
+                                        <TableColumn fx:id="userNameColumn" text="Name" prefWidth="150"/>
+                                        <TableColumn fx:id="userRoleColumn" text="Role" prefWidth="150"/>
+                                        <TableColumn fx:id="userEmailColumn" text="Email" prefWidth="200"/>
+                                    </columns>
+                                </TableView>
+                            </children>
+                            <padding>
+                                <Insets top="10" right="10" bottom="10" left="10"/>
+                            </padding>
+                        </VBox>
+                    </content>
+                </Tab>
+                <Tab text="Transaction History" closable="false">
+                    <content>
+                        <VBox spacing="10">
+                            <children>
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <children>
+                                        <TextField fx:id="transactionSearchField" promptText="Search by customer or order ID..." prefWidth="300" styleClass="dashboard-text-field"/>
+                                        <Label text="Status:" styleClass="dashboard-label"/>
+                                        <ComboBox fx:id="transactionStatusFilter" prefWidth="150" styleClass="dashboard-combo-box"/>
+                                        <Button fx:id="transactionSearchButton" text="Search" styleClass="dashboard-btn"/>
+                                    </children>
+                                    <padding>
+                                        <Insets top="10" right="10" bottom="10" left="10"/>
+                                    </padding>
+                                </HBox>
+                                <TableView fx:id="transactionTable" styleClass="dashboard-table">
+                                    <columns>
+                                        <TableColumn fx:id="orderIdColumn" text="Order ID" prefWidth="80"/>
+                                        <TableColumn fx:id="transactionUserIdColumn" text="User ID" prefWidth="80"/>
+                                        <TableColumn fx:id="customerNameColumn" text="Customer Name" prefWidth="150"/>
+                                        <TableColumn fx:id="totalAmountColumn" text="Total Amount" prefWidth="120"/>
+                                        <TableColumn fx:id="paymentMethodColumn" text="Payment Method" prefWidth="120"/>
+                                        <TableColumn fx:id="orderStatusColumn" text="Status" prefWidth="100"/>
+                                        <TableColumn fx:id="orderedAtColumn" text="Ordered At" prefWidth="140"/>
+                                    </columns>
+                                </TableView>
+                            </children>
+                            <padding>
+                                <Insets top="10" right="10" bottom="10" left="10"/>
+                            </padding>
+                        </VBox>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
     </center>
     <padding>
         <Insets top="20" right="20" bottom="20" left="20"/>

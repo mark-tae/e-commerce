@@ -14,6 +14,7 @@ public class Product {
     private String imagePath;
     private String status;
     private LocalDateTime createdAt;
+    private int userId;
 
     // Constructor for backward compatibility
     public Product(int id, String name, String description, String categoryName, double price, int stock, double discount, String imagePath) {
@@ -36,6 +37,7 @@ public class Product {
         this.description = description;
         this.categoryName = categoryName;
         this.vendorId = vendorId;
+        this.userId = userId;
         this.price = price;
         this.stock = stock;
         this.discount = discount;
@@ -57,7 +59,12 @@ public class Product {
     public double getDiscount() { return discount; }
     public String getImagePath() { return imagePath; }
     public String getStatus() { return status; }
+    public int getUserId() { return userId; }
     public LocalDateTime getCreatedAt() { return createdAt; }
 
     public void setStatus(String status) { this.status = status; }
+
+
+
 }
+

@@ -3,8 +3,8 @@ package com.example.maxecommerce.controller;
 import com.example.maxecommerce.model.Earnings;
 import com.example.maxecommerce.model.Order;
 import com.example.maxecommerce.model.Product;
-import com.example.maxecommerce.model.ApprovalRequest;
 import com.example.maxecommerce.util.DatabaseConnection;
+import com.example.maxecommerce.util.SessionManager;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,11 +12,18 @@ import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -28,16 +35,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.maxecommerce.util.SessionManager.LOGGER;
+
 public class VendorDashboardController {
 
     @FXML
     private BorderPane rootPane;
     @FXML
+    private Button homeButton;
+    @FXML
     private Button backButton;
     @FXML
     private Button logoutButton;
     @FXML
+    private Button refreshButton;
+    @FXML
     private TabPane tabPane;
+    @FXML
+    private TextField salesSearchField;
+    @FXML
+    private Button salesSearchButton;
     @FXML
     private TableView<Order> salesTable;
     @FXML
@@ -47,11 +64,15 @@ public class VendorDashboardController {
     @FXML
     private TableColumn<Order, String> totalAmountColumn;
     @FXML
-    private TableColumn<Order, String> salesStatusColumn; // Renamed for Sales tab
+    private TableColumn<Order, String> salesStatusColumn;
     @FXML
     private TableColumn<Order, String> dateColumn;
     @FXML
     private Button addProductButton;
+    @FXML
+    private TextField inventorySearchField;
+    @FXML
+    private Button inventorySearchButton;
     @FXML
     private TableView<Product> inventoryTable;
     @FXML
@@ -65,11 +86,11 @@ public class VendorDashboardController {
     @FXML
     private TableColumn<Product, String> discountColumn;
     @FXML
-    private TableColumn<Product, String> statusColumn; // For Inventory tab
+    private TableColumn<Product, String> statusColumn;
     @FXML
     private TableColumn<Product, Void> inventoryActionsColumn;
     @FXML
-    private Text totalEarningsText;
+    private Label totalEarningsText;
     @FXML
     private TableView<Earnings> earningsTable;
     @FXML
@@ -77,16 +98,58 @@ public class VendorDashboardController {
     @FXML
     private TableColumn<Earnings, String> earningsAmountColumn;
 
-    private final int vendorId = 1; // Replace with actual vendor ID from authentication
+    private static final String IMAGE_DIR = "src/main/resources/com/example/maxecommerce/images/";
 
     @FXML
     private void initialize() {
+        SessionManager session = SessionManager.getInstance();
+        if (!session.isLoggedIn()) {
+            showAlert(Alert.AlertType.ERROR, "Error", "No user logged in.");
+            handleLogout();
+            return;
+        }
+        if (session.isSuspended()) {
+            showAlert(Alert.AlertType.ERROR, "Error", "Your account is suspended.");
+            handleLogout();
+            return;
+        }
+        if (!session.isVendor()) {
+            showAlert(Alert.AlertType.ERROR, "Error", "You do not have vendor privileges.");
+            handleBack();
+            return;
+        }
+
+        // Listen for scene attachment to set window properties
+        rootPane.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null) {
+                Stage stage = (Stage) newScene.getWindow();
+                stage.setWidth(1200);
+                stage.setHeight(800);
+                stage.setResizable(false);
+                stage.centerOnScreen();
+            }
+        });
+
         setupSalesTable();
         setupInventoryTable();
         setupEarningsTable();
+        setupSearchControls();
         loadSales();
         loadInventory();
         loadEarnings();
+    }
+
+    private void setupSearchControls() {
+        salesSearchButton.setOnAction(event -> loadSales());
+        inventorySearchButton.setOnAction(event -> loadInventory());
+        refreshButton.setOnAction(event -> {
+            salesSearchField.clear();
+            inventorySearchField.clear();
+            loadSales();
+            loadInventory();
+            loadEarnings();
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Dashboard refreshed.");
+        });
     }
 
     private void setupSalesTable() {
@@ -94,6 +157,31 @@ public class VendorDashboardController {
         customerColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getCustomerName()));
         totalAmountColumn.setCellValueFactory(cellData -> new SimpleStringProperty(String.format("₱%.2f", cellData.getValue().getTotalAmount())));
         salesStatusColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStatus()));
+        salesStatusColumn.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(String status, boolean empty) {
+                super.updateItem(status, empty);
+                if (empty || status == null) {
+                    setText(null);
+                    setStyle("");
+                } else {
+                    setText(status);
+                    switch (status.toLowerCase()) {
+                        case "completed":
+                            setStyle("-fx-text-fill: #2e7d32; -fx-font-weight: bold;");
+                            break;
+                        case "pending":
+                            setStyle("-fx-text-fill: #f57c00; -fx-font-weight: bold;");
+                            break;
+                        case "cancelled":
+                            setStyle("-fx-text-fill: #d32f2f; -fx-font-weight: bold;");
+                            break;
+                        default:
+                            setStyle("");
+                    }
+                }
+            }
+        });
         dateColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))));
     }
 
@@ -115,13 +203,14 @@ public class VendorDashboardController {
                     setText(status);
                     switch (status.toLowerCase()) {
                         case "pending":
-                            setStyle("-fx-text-fill: #ffc107; -fx-font-weight: bold;");
+                            setStyle("-fx-text-fill: #f57c00; -fx-font-weight: bold;");
                             break;
                         case "approved":
-                            setStyle("-fx-text-fill: #28a745; -fx-font-weight: bold;");
+                            setStyle("-fx-text-fill: #2e7d32; -fx-font-weight: bold;");
                             break;
                         case "rejected":
-                            setStyle("-fx-text-fill: #dc3545; -fx-font-weight: bold;");
+                        case "pending_delete":
+                            setStyle("-fx-text-fill: #d32f2f; -fx-font-weight: bold;");
                             break;
                         default:
                             setStyle("");
@@ -133,18 +222,20 @@ public class VendorDashboardController {
         inventoryActionsColumn.setCellFactory(param -> new TableCell<>() {
             private final Button editButton = new Button("Edit");
             private final Button deleteButton = new Button("Delete");
-            private final HBox pane = new HBox(5, editButton, deleteButton);
+            private final HBox pane = new HBox(8, editButton, deleteButton);
 
             {
-                editButton.getStyleClass().add("dashboard-btn-primary");
-                deleteButton.getStyleClass().add("dashboard-btn-danger");
+                editButton.getStyleClass().add("dashboard-btn");
+                deleteButton.getStyleClass().add("dashboard-btn");
                 editButton.setOnAction(event -> {
                     Product product = getTableView().getItems().get(getIndex());
                     openEditProductForm(product);
+                    loadInventory();
                 });
                 deleteButton.setOnAction(event -> {
                     Product product = getTableView().getItems().get(getIndex());
                     deleteProduct(product);
+                    loadInventory();
                 });
             }
 
@@ -163,15 +254,32 @@ public class VendorDashboardController {
 
     private void loadSales() {
         List<Order> orders = new ArrayList<>();
+        String search = salesSearchField.getText().trim();
+        String query = "SELECT o.order_id, o.total_amount, o.status, o.created_at, c.first_name, c.last_name " +
+                "FROM Orders o " +
+                "JOIN user c ON o.user_id = c.user_id " +
+                "JOIN OrderItem oi ON o.order_id = oi.order_id " +
+                "JOIN Product p ON oi.product_id = p.product_id " +
+                "WHERE p.user_id = ?";
+        List<String> conditions = new ArrayList<>();
+        List<Object> params = new ArrayList<>();
+        params.add(SessionManager.getInstance().getCurrentUserId());
+
+        if (!search.isEmpty()) {
+            conditions.add("(CONCAT(c.first_name, ' ', c.last_name) LIKE ? OR o.order_id LIKE ?)");
+            params.add("%" + search + "%");
+            params.add("%" + search + "%");
+        }
+
+        if (!conditions.isEmpty()) {
+            query += " AND " + String.join(" AND ", conditions);
+        }
+
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(
-                     "SELECT o.order_id, o.total_amount, o.status, o.created_at, c.first_name, c.last_name " +
-                             "FROM Orders o " +
-                             "JOIN user c ON o.user_id = c.user_id " +
-                             "JOIN OrderItem oi ON o.order_id = oi.order_id " +
-                             "JOIN Product p ON oi.product_id = p.product_id " +
-                             "WHERE p.vendor_id = ?")) {
-            stmt.setInt(1, vendorId);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            for (int i = 0; i < params.size(); i++) {
+                stmt.setObject(i + 1, params.get(i));
+            }
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 orders.add(new Order(
@@ -187,16 +295,36 @@ public class VendorDashboardController {
             e.printStackTrace();
         }
         salesTable.getItems().setAll(orders);
+        if (orders.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "No Data", "No sales found.");
+        }
     }
 
     private void loadInventory() {
         List<Product> products = new ArrayList<>();
+        String search = inventorySearchField.getText().trim();
+        String query = "SELECT p.product_id, p.name, p.description, c.name AS category_name, p.user_id, p.price, p.stock, p.discount, p.image_path, p.status, p.created_at " +
+                "FROM Product p JOIN Category c ON p.category_id = c.category_id " +
+                "WHERE p.user_id = ?";
+        List<String> conditions = new ArrayList<>();
+        List<Object> params = new ArrayList<>();
+        params.add(SessionManager.getInstance().getCurrentUserId());
+
+        if (!search.isEmpty()) {
+            conditions.add("(p.name LIKE ? OR c.name LIKE ?)");
+            params.add("%" + search + "%");
+            params.add("%" + search + "%");
+        }
+
+        if (!conditions.isEmpty()) {
+            query += " AND " + String.join(" AND ", conditions);
+        }
+
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(
-                     "SELECT p.product_id, p.name, p.description, c.name AS category_name, p.vendor_id, p.price, p.stock, p.discount, p.image_path, p.status, p.created_at " +
-                             "FROM Product p JOIN Category c ON p.category_id = c.category_id " +
-                             "WHERE p.vendor_id = ?")) {
-            stmt.setInt(1, vendorId);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            for (int i = 0; i < params.size(); i++) {
+                stmt.setObject(i + 1, params.get(i));
+            }
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 products.add(new Product(
@@ -204,7 +332,7 @@ public class VendorDashboardController {
                         rs.getString("name"),
                         rs.getString("description"),
                         rs.getString("category_name"),
-                        rs.getInt("vendor_id"),
+                        rs.getInt("user_id"),
                         rs.getDouble("price"),
                         rs.getInt("stock"),
                         rs.getDouble("discount"),
@@ -218,6 +346,9 @@ public class VendorDashboardController {
             e.printStackTrace();
         }
         inventoryTable.getItems().setAll(products);
+        if (products.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "No Data", "No products found.");
+        }
     }
 
     private void loadEarnings() {
@@ -229,8 +360,8 @@ public class VendorDashboardController {
                              "FROM OrderItem oi " +
                              "JOIN Orders o ON oi.order_id = o.order_id " +
                              "JOIN Product p ON oi.product_id = p.product_id " +
-                             "WHERE p.vendor_id = ? AND o.status = 'completed'")) {
-            stmt.setInt(1, vendorId);
+                             "WHERE p.user_id = ? AND o.status = 'completed'")) {
+            stmt.setInt(1, SessionManager.getInstance().getCurrentUserId());
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 double amount = rs.getDouble("price_at_purchase") * rs.getInt("quantity");
@@ -248,6 +379,9 @@ public class VendorDashboardController {
         List<Earnings> earningsList = new ArrayList<>();
         monthlyEarnings.forEach((month, amount) -> earningsList.add(new Earnings(month, amount)));
         earningsTable.getItems().setAll(earningsList);
+        if (earningsList.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "No Data", "No earnings found.");
+        }
     }
 
     @FXML
@@ -262,86 +396,143 @@ public class VendorDashboardController {
     private void deleteProduct(Product product) {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Delete Product");
-        confirm.setHeaderText("Are you sure you want to delete " + product.getName() + "?");
-        confirm.setContentText("This action requires admin approval.");
+        confirm.setHeaderText("Delete " + product.getName() + "?");
+        confirm.setContentText("This will permanently delete the product. Are you sure?");
+        String cssPath = getClass().getResource("/com/example/maxecommerce/vendor/vendor.css") != null
+                ? getClass().getResource("/com/example/maxecommerce/vendor/vendor.css").toExternalForm()
+                : "";
+        if (!cssPath.isEmpty()) {
+            confirm.getDialogPane().getStylesheets().add(cssPath);
+        } else {
+            LOGGER.warning("CSS file not found at /com/example/maxecommerce/vendor/vendor.css");
+        }
+        confirm.getDialogPane().setMinWidth(400);
+        confirm.getDialogPane().setMinHeight(200);
+
         if (confirm.showAndWait().filter(ButtonType.OK::equals).isPresent()) {
             try (Connection conn = DatabaseConnection.getConnection()) {
                 conn.setAutoCommit(false);
                 try {
-                    // Insert approval request
-                    PreparedStatement approvalStmt = conn.prepareStatement(
-                            "INSERT INTO ProductApproval (product_id, vendor_id, request_type, status) VALUES (?, ?, 'delete', 'pending')",
-                            PreparedStatement.RETURN_GENERATED_KEYS);
-                    approvalStmt.setInt(1, product.getId());
-                    approvalStmt.setInt(2, vendorId);
-                    approvalStmt.executeUpdate();
 
-                    ResultSet keys = approvalStmt.getGeneratedKeys();
-                    keys.next();
-                    int requestId = keys.getInt(1);
+                    PreparedStatement deleteStmt = conn.prepareStatement(
+                            "DELETE FROM Product WHERE product_id = ?");
+                    deleteStmt.setInt(1, product.getId());
 
-                    // Notify admin
-                    PreparedStatement notifyStmt = conn.prepareStatement(
-                            "INSERT INTO Notification (user_id, message) VALUES (?, ?)");
-                    notifyStmt.setInt(1, 1); // Admin ID 1
-                    notifyStmt.setString(2, "Vendor requested deletion of product #" + product.getId() + " (Request #" + requestId + ")");
-                    notifyStmt.executeUpdate();
 
-                    conn.commit();
-                    showAlert(Alert.AlertType.INFORMATION, "Success", "Deletion request submitted for approval.");
+
+                    
+                    int rowsAffected = deleteStmt.executeUpdate();
+
+
+
+
+
+
+                    if (rowsAffected > 0) {
+                        conn.commit();
+                        showAlert(Alert.AlertType.INFORMATION, "Success", "Product '" + product.getName() + "' deleted successfully.");
+                        LOGGER.info("Product deleted: product_id=" + product.getId());
+                    } else {
+                        conn.rollback();
+                        showAlert(Alert.AlertType.ERROR, "Error", "Product not found or could not be deleted.");
+                        LOGGER.warning("No rows affected for product_id=" + product.getId());
+                    }
                 } catch (SQLException e) {
                     conn.rollback();
-                    showAlert(Alert.AlertType.ERROR, "Error", "Failed to submit deletion request: " + e.getMessage());
+                    showAlert(Alert.AlertType.ERROR, "Error", "Failed to delete product: " + e.getMessage());
+                    LOGGER.severe("Error deleting product_id=" + product.getId() + ": " + e.getMessage());
                     e.printStackTrace();
                 }
             } catch (SQLException e) {
                 showAlert(Alert.AlertType.ERROR, "Error", "Database connection failed: " + e.getMessage());
+                LOGGER.severe("Database connection failed: " + e.getMessage());
                 e.printStackTrace();
             }
+        } else {
+            LOGGER.info("Product deletion cancelled for product_id=" + product.getId());
         }
     }
 
     private void showProductForm(Product product, String requestType) {
         try {
             VBox form = new VBox(10);
-            form.getStyleClass().add("dashboard-form");
+            form.getStyleClass().add("dashboard-card");
             form.setPadding(new Insets(20));
 
+            Label nameLabel = new Label("Name");
+            nameLabel.getStyleClass().add("dashboard-label");
             TextField nameField = new TextField(product != null ? product.getName() : "");
             nameField.getStyleClass().add("dashboard-text-field");
+
+            Label descriptionLabel = new Label("Description");
+            descriptionLabel.getStyleClass().add("dashboard-label");
             TextField descriptionField = new TextField(product != null ? product.getDescription() : "");
             descriptionField.getStyleClass().add("dashboard-text-field");
+
+            Label categoryLabel = new Label("Category");
+            categoryLabel.getStyleClass().add("dashboard-label");
             TextField categoryField = new TextField(product != null ? product.getCategoryName() : "");
             categoryField.getStyleClass().add("dashboard-text-field");
+
+            Label priceLabel = new Label("Price (₱)");
+            priceLabel.getStyleClass().add("dashboard-label");
             TextField priceField = new TextField(product != null ? String.valueOf(product.getPrice()) : "");
             priceField.getStyleClass().add("dashboard-text-field");
+
+            Label stockLabel = new Label("Stock");
+            stockLabel.getStyleClass().add("dashboard-label");
             TextField stockField = new TextField(product != null ? String.valueOf(product.getStock()) : "");
             stockField.getStyleClass().add("dashboard-text-field");
+
+            Label discountLabel = new Label("Discount (%)");
+            discountLabel.getStyleClass().add("dashboard-label");
             TextField discountField = new TextField(product != null ? String.valueOf(product.getDiscount()) : "");
             discountField.getStyleClass().add("dashboard-text-field");
+
+            Label imageLabel = new Label("Product Image");
+            imageLabel.getStyleClass().add("dashboard-label");
+            ImageView imageView = new ImageView();
+            imageView.setFitWidth(100);
+            imageView.setFitHeight(100);
+            imageView.setPreserveRatio(true);
+            final File[] selectedImage = {null};
+            if (product != null && product.getImagePath() != null) {
+                try {
+                    String imagePath = "/com/example/maxecommerce/images/" + product.getImagePath();
+                    Image image = new Image(getClass().getResourceAsStream(imagePath));
+                    imageView.setImage(image);
+                } catch (Exception e) {
+                    imageView.setImage(null);
+                }
+            }
+            Button uploadButton = new Button("Upload Image");
+            uploadButton.getStyleClass().add("dashboard-btn");
+            uploadButton.setOnAction(e -> {
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Select Product Image");
+                fileChooser.getExtensionFilters().addAll(
+                        new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
+                );
+                File file = fileChooser.showOpenDialog(form.getScene().getWindow());
+                if (file != null) {
+                    selectedImage[0] = file;
+                    try {
+                        Image image = new Image(file.toURI().toString());
+                        imageView.setImage(image);
+                    } catch (Exception ex) {
+                        showAlert(Alert.AlertType.ERROR, "Error", "Failed to load image: " + ex.getMessage());
+                    }
+                }
+            });
+
             Label statusLabel = new Label("Status: " + (product != null ? product.getStatus() : "Pending"));
             statusLabel.getStyleClass().add("dashboard-label");
 
             Button saveButton = new Button(product != null ? "Submit Update" : "Add Product");
-            saveButton.getStyleClass().add("dashboard-btn-primary");
-
-            // Create and style labels
-            Label nameLabel = new Label("Name");
-            nameLabel.getStyleClass().add("dashboard-label");
-            Label descriptionLabel = new Label("Description");
-            descriptionLabel.getStyleClass().add("dashboard-label");
-            Label categoryLabel = new Label("Category");
-            categoryLabel.getStyleClass().add("dashboard-label");
-            Label priceLabel = new Label("Price (₱)");
-            priceLabel.getStyleClass().add("dashboard-label");
-            Label stockLabel = new Label("Stock");
-            stockLabel.getStyleClass().add("dashboard-label");
-            Label discountLabel = new Label("Discount (%)");
-            discountLabel.getStyleClass().add("dashboard-label");
+            saveButton.getStyleClass().add("dashboard-btn");
 
             saveButton.setOnAction(e -> {
                 try {
-                    // Validate inputs
                     if (nameField.getText().trim().isEmpty() || categoryField.getText().trim().isEmpty()) {
                         showAlert(Alert.AlertType.ERROR, "Error", "Name and Category are required.");
                         return;
@@ -354,6 +545,18 @@ public class VendorDashboardController {
                         return;
                     }
 
+                    String imagePath = null;
+                    if (selectedImage[0] != null) {
+                        Path targetDir = Paths.get(IMAGE_DIR);
+                        Files.createDirectories(targetDir);
+                        String fileName = System.currentTimeMillis() + "_" + selectedImage[0].getName();
+                        Path targetPath = targetDir.resolve(fileName);
+                        Files.copy(selectedImage[0].toPath(), targetPath);
+                        imagePath = fileName;
+                    } else if (product != null && product.getImagePath() != null) {
+                        imagePath = product.getImagePath();
+                    }
+
                     saveProduct(
                             product != null ? product.getId() : -1,
                             nameField.getText(),
@@ -362,12 +565,16 @@ public class VendorDashboardController {
                             price,
                             stock,
                             discount,
+                            imagePath,
                             requestType
                     );
                     loadInventory();
                     ((Stage) saveButton.getScene().getWindow()).close();
                 } catch (NumberFormatException ex) {
                     showAlert(Alert.AlertType.ERROR, "Error", "Invalid number format: " + ex.getMessage());
+                } catch (IOException ex) {
+                    showAlert(Alert.AlertType.ERROR, "Error", "Failed to save image: " + ex.getMessage());
+                    ex.printStackTrace();
                 } catch (SQLException ex) {
                     showAlert(Alert.AlertType.ERROR, "Error", "Database error: " + ex.getMessage());
                     ex.printStackTrace();
@@ -381,16 +588,20 @@ public class VendorDashboardController {
                     priceLabel, priceField,
                     stockLabel, stockField,
                     discountLabel, discountField,
-                    statusLabel,
-                    saveButton
+                    imageLabel, imageView, uploadButton,
+                    statusLabel, saveButton
             );
 
-            Scene scene = new Scene(form, 400, 600);
-            scene.getStylesheets().add(getClass().getResource("/com/example/maxecommerce/vendor/vendor.css").toExternalForm());
+            Scene scene = new Scene(form, 400, 700);
+            scene.getStylesheets().add(getClass().getResource("/com/example/maxecommerce/admin/admin.css").toExternalForm());
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle(product != null ? "Edit Product" : "Add Product");
             stage.setScene(scene);
+            stage.setWidth(400);
+            stage.setHeight(800);
+            stage.setResizable(false);
+            stage.centerOnScreen();
             stage.show();
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Error", "Error opening form: " + e.getMessage());
@@ -398,11 +609,10 @@ public class VendorDashboardController {
         }
     }
 
-    private void saveProduct(int productId, String name, String description, String categoryName, double price, int stock, double discount, String requestType) throws SQLException {
+    private void saveProduct(int productId, String name, String description, String categoryName, double price, int stock, double discount, String imagePath, String requestType) throws SQLException {
         try (Connection conn = DatabaseConnection.getConnection()) {
             conn.setAutoCommit(false);
             try {
-                // Get or create category
                 int categoryId;
                 PreparedStatement catStmt = conn.prepareStatement("SELECT category_id FROM Category WHERE name = ?");
                 catStmt.setString(1, categoryName);
@@ -420,42 +630,41 @@ public class VendorDashboardController {
 
                 int newProductId = productId;
                 if (requestType.equals("create")) {
-                    // Insert product with pending status
                     PreparedStatement stmt = conn.prepareStatement(
-                            "INSERT INTO Product (name, description, category_id, vendor_id, price, stock, discount, status) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')",
+                            "INSERT INTO Product (name, description, category_id, user_id, price, stock, discount, image_path, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')",
                             PreparedStatement.RETURN_GENERATED_KEYS);
                     stmt.setString(1, name);
                     stmt.setString(2, description);
                     stmt.setInt(3, categoryId);
-                    stmt.setInt(4, vendorId);
+                    stmt.setInt(4, SessionManager.getInstance().getCurrentUserId());
                     stmt.setDouble(5, price);
                     stmt.setInt(6, stock);
                     stmt.setDouble(7, discount);
+                    stmt.setString(8, imagePath);
                     stmt.executeUpdate();
 
                     ResultSet keys = stmt.getGeneratedKeys();
                     keys.next();
                     newProductId = keys.getInt(1);
                 } else if (requestType.equals("update")) {
-                    // Store update as pending approval
                     PreparedStatement stmt = conn.prepareStatement(
-                            "UPDATE Product SET name = ?, description = ?, category_id = ?, price = ?, stock = ?, discount = ?, status = 'pending' WHERE product_id = ?");
+                            "UPDATE Product SET name = ?, description = ?, category_id = ?, price = ?, stock = ?, discount = ?, image_path = ?, status = 'pending' WHERE product_id = ?");
                     stmt.setString(1, name);
                     stmt.setString(2, description);
                     stmt.setInt(3, categoryId);
                     stmt.setDouble(4, price);
                     stmt.setInt(5, stock);
                     stmt.setDouble(6, discount);
-                    stmt.setInt(7, productId);
+                    stmt.setString(7, imagePath);
+                    stmt.setInt(8, productId);
                     stmt.executeUpdate();
                 }
 
-                // Insert approval request
                 PreparedStatement approvalStmt = conn.prepareStatement(
-                        "INSERT INTO ProductApproval (product_id, vendor_id, request_type, status) VALUES (?, ?, ?, 'pending')",
+                        "INSERT INTO ProductApproval (product_id, user_id, request_type, status) VALUES (?, ?, ?, 'pending')",
                         PreparedStatement.RETURN_GENERATED_KEYS);
                 approvalStmt.setInt(1, newProductId);
-                approvalStmt.setInt(2, vendorId);
+                approvalStmt.setInt(2, SessionManager.getInstance().getCurrentUserId());
                 approvalStmt.setString(3, requestType);
                 approvalStmt.executeUpdate();
 
@@ -463,11 +672,9 @@ public class VendorDashboardController {
                 keys.next();
                 int requestId = keys.getInt(1);
 
-                // Notify admin
                 PreparedStatement notifyStmt = conn.prepareStatement(
-                        "INSERT INTO Notification (user_id, message) VALUES (?, ?)");
-                notifyStmt.setInt(1, 1); // Admin ID 1
-                notifyStmt.setString(2, "Vendor submitted " + requestType + " request for product #" + newProductId + " (Request #" + requestId + ")");
+                        "INSERT INTO Notification (user_id, message) VALUES (1, ?)");
+                notifyStmt.setString(1, "Vendor submitted " + requestType + " request for product #" + newProductId + " (Request #" + requestId + ")");
                 notifyStmt.executeUpdate();
 
                 conn.commit();
@@ -480,40 +687,50 @@ public class VendorDashboardController {
     }
 
     @FXML
+    private void handleHome() {
+        loadScene("/com/example/maxecommerce/home/HomeView.fxml", "Home");
+    }
+
+    @FXML
     private void handleBack() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/maxecommerce/view/HomeView.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) backButton.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Customer Dashboard");
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Navigated to dashboard!");
-        } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Error", "Error navigating to dashboard: " + e.getMessage());
-            e.printStackTrace();
-        }
+        handleHome();
     }
 
     @FXML
     private void handleLogout() {
+        SessionManager.getInstance().logout();
+        loadScene("/com/example/maxecommerce/auth/LoginView.fxml", "E-Commerce Platform - Login");
+    }
+
+    private void loadScene(String fxmlPath, String title) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/maxecommerce/auth/LoginView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
-            Stage stage = (Stage) logoutButton.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setTitle("E-Commerce Platform - Login");
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Logged out successfully!");
+            Stage stage = (Stage) rootPane.getScene().getWindow();
+            Scene scene = new Scene(root, 1200, 800);
+            stage.setScene(scene);
+            stage.setTitle(title);
+            stage.setWidth(1400);
+            stage.setHeight(800);
+            stage.setResizable(true);
+            stage.centerOnScreen();
         } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Error", "Error logging out: " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Error", "Error navigating: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    private void showAlert(Alert.AlertType type, String title, String content) {
+    private void showAlert(Alert.AlertType type, String title, String message) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(null);
-        alert.setContentText(content);
+        alert.setContentText(message);
+        alert.getDialogPane().getStylesheets().add(getClass().getResource("/com/example/maxecommerce/admin/admin.css").toExternalForm());
+        alert.getDialogPane().setMinWidth(400);
+        alert.getDialogPane().setMinHeight(200);
+        Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+        alertStage.setResizable(false);
+        alertStage.centerOnScreen();
         alert.showAndWait();
     }
 }

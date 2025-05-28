@@ -83,6 +83,47 @@
             <artifactId>bootstrapfx-core</artifactId>
             <version>0.4.0</version>
         </dependency>
+        <!-- Stripe -->
+        <dependency>
+            <groupId>com.stripe</groupId>
+            <artifactId>stripe-java</artifactId>
+            <version>20.99.0</version>
+        </dependency>
+        <!-- MySQL Connector -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.27</version>
+        </dependency>
+        <!-- QR Code Generator -->
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>3.4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+            <version>3.4.1</version>
+        </dependency>
+        <!-- JSON for HTTP Server -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.12.5</version>
+        </dependency>
+        <!-- PayMongo Java SDK -->
+<!--        <dependency>-->
+<!--            <groupId>com.paymongo</groupId>-->
+<!--            <artifactId>paymongo-java</artifactId>-->
+<!--            <version>0.0.3</version>-->
+<!--        </dependency>-->
+<!--        &lt;!&ndash; HTTP client for fallback or webhook server &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>com.sun.net.httpserver</groupId>-->
+<!--            <artifactId>httpclient</artifactId>-->
+<!--            <version>1.0</version>-->
+<!--        </dependency>-->
 <!--        <dependency>-->
 <!--            <groupId>eu.hansolo</groupId>-->
 <!--            <artifactId>tilesfx</artifactId>-->

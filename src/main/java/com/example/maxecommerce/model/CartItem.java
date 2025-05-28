@@ -18,6 +18,7 @@ public class CartItem {
         return cartItemId;
     }
 
+
     public String getProductName() {
         return productName;
     }

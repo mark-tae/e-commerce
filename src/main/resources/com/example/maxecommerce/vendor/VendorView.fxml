@@ -4,66 +4,111 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane fx:id="rootPane" styleClass="dashboard-container" stylesheets="@vendor.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.maxecommerce.controller.VendorDashboardController">
+<BorderPane fx:id="rootPane" stylesheets="@vendor.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.maxecommerce.controller.VendorDashboardController">
     <top>
-        <HBox styleClass="dashboard-header" alignment="CENTER_LEFT" spacing="20">
-            <padding>
-                <Insets top="10" right="10" bottom="10" left="10"/>
-            </padding>
-            <Text text="Vendor Dashboard" styleClass="dashboard-title"/>
-            <Region HBox.hgrow="ALWAYS"/>
-            <Button fx:id="backButton" text="Back" styleClass="dashboard-nav-btn" onAction="#handleBack"/>
-            <Button fx:id="logoutButton" text="Logout" styleClass="dashboard-nav-btn" onAction="#handleLogout"/>
-        </HBox>
+        <VBox styleClass="dashboard-header" spacing="10">
+            <children>
+                <Label text="Vendor Dashboard" styleClass="dashboard-title"/>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <children>
+                        <Button fx:id="homeButton" text="Home" onAction="#handleHome" styleClass="dashboard-btn"/>
+                        <Button fx:id="backButton" text="Back" onAction="#handleBack" styleClass="dashboard-btn"/>
+                        <Button fx:id="logoutButton" text="Logout" onAction="#handleLogout" styleClass="dashboard-btn"/>
+                        <Button fx:id="refreshButton" text="Refresh" styleClass="dashboard-btn"/>
+                    </children>
+                    <padding>
+                        <Insets top="15" right="20" bottom="15" left="20"/>
+                    </padding>
+                </HBox>
+            </children>
+        </VBox>
     </top>
     <center>
-        <TabPane fx:id="tabPane">
+        <TabPane fx:id="tabPane" styleClass="dashboard-tab-pane">
             <tabs>
                 <Tab text="Sales" closable="false">
-                    <TableView fx:id="salesTable" styleClass="dashboard-table">
-                        <columns>
-                            <TableColumn fx:id="orderIdColumn" text="Order ID" prefWidth="100"/>
-                            <TableColumn fx:id="customerColumn" text="Customer" prefWidth="150"/>
-                            <TableColumn fx:id="totalAmountColumn" text="Total (₱)" prefWidth="100"/>
-                            <TableColumn fx:id="salesStatusColumn" text="Status" prefWidth="100"/>
-                            <TableColumn fx:id="dateColumn" text="Date" prefWidth="150"/>
-                        </columns>
-                    </TableView>
+                    <content>
+                        <VBox spacing="10" styleClass="dashboard-card">
+                            <children>
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <children>
+                                        <TextField fx:id="salesSearchField" promptText="Search by customer or order ID..." prefWidth="300" styleClass="dashboard-text-field"/>
+                                        <Button fx:id="salesSearchButton" text="Search" styleClass="dashboard-btn"/>
+                                    </children>
+                                    <padding>
+                                        <Insets top="10" right="10" bottom="10" left="10"/>
+                                    </padding>
+                                </HBox>
+                                <TableView fx:id="salesTable" styleClass="dashboard-table">
+                                    <columns>
+                                        <TableColumn fx:id="orderIdColumn" text="Order ID" prefWidth="100"/>
+                                        <TableColumn fx:id="customerColumn" text="Customer" prefWidth="200"/>
+                                        <TableColumn fx:id="totalAmountColumn" text="Total" prefWidth="120"/>
+                                        <TableColumn fx:id="salesStatusColumn" text="Status" prefWidth="100"/>
+                                        <TableColumn fx:id="dateColumn" text="Date" prefWidth="150"/>
+                                    </columns>
+                                </TableView>
+                            </children>
+                            <padding>
+                                <Insets top="10" right="10" bottom="10" left="10"/>
+                            </padding>
+                        </VBox>
+                    </content>
                 </Tab>
                 <Tab text="Inventory" closable="false">
-                    <VBox spacing="10" alignment="TOP_CENTER">
-                        <padding>
-                            <Insets top="10" right="10" bottom="10" left="10"/>
-                        </padding>
-                        <Button fx:id="addProductButton" text="Add Product" styleClass="dashboard-btn-primary" onAction="#openAddProductForm"/>
-                        <TableView fx:id="inventoryTable" styleClass="dashboard-table">
-                            <columns>
-                                <TableColumn fx:id="productNameColumn" text="Product" prefWidth="150"/>
-                                <TableColumn fx:id="categoryColumn" text="Category" prefWidth="100"/>
-                                <TableColumn fx:id="priceColumn" text="Price (₱)" prefWidth="80"/>
-                                <TableColumn fx:id="stockColumn" text="Stock" prefWidth="80"/>
-                                <TableColumn fx:id="discountColumn" text="Discount (%)" prefWidth="80"/>
-                                <TableColumn fx:id="statusColumn" text="Status" prefWidth="80"/>
-                                <TableColumn fx:id="inventoryActionsColumn" text="Actions" prefWidth="120"/>
-                            </columns>
-                        </TableView>
-                    </VBox>
+                    <content>
+                        <VBox spacing="10" styleClass="dashboard-card">
+                            <children>
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <children>
+                                        <TextField fx:id="inventorySearchField" promptText="Search by name or category..." prefWidth="300" styleClass="dashboard-text-field"/>
+                                        <Button fx:id="inventorySearchButton" text="Search" styleClass="dashboard-btn"/>
+                                        <Button fx:id="addProductButton" text="Add Product" onAction="#openAddProductForm" styleClass="dashboard-btn"/>
+                                    </children>
+                                    <padding>
+                                        <Insets top="10" right="10" bottom="10" left="10"/>
+                                    </padding>
+                                </HBox>
+                                <TableView fx:id="inventoryTable" styleClass="dashboard-table">
+                                    <columns>
+                                        <TableColumn fx:id="productNameColumn" text="Name" prefWidth="200"/>
+                                        <TableColumn fx:id="categoryColumn" text="Category" prefWidth="150"/>
+                                        <TableColumn fx:id="priceColumn" text="Price" prefWidth="100"/>
+                                        <TableColumn fx:id="stockColumn" text="Stock" prefWidth="80"/>
+                                        <TableColumn fx:id="discountColumn" text="Discount" prefWidth="100"/>
+                                        <TableColumn fx:id="statusColumn" text="Status" prefWidth="100"/>
+                                        <TableColumn fx:id="inventoryActionsColumn" text="Actions" prefWidth="150"/>
+                                    </columns>
+                                </TableView>
+                            </children>
+                            <padding>
+                                <Insets top="10" right="10" bottom="10" left="10"/>
+                            </padding>
+                        </VBox>
+                    </content>
                 </Tab>
                 <Tab text="Earnings" closable="false">
-                    <VBox spacing="10" alignment="TOP_CENTER">
-                        <padding>
-                            <Insets top="10" right="10" bottom="10" left="10"/>
-                        </padding>
-                        <Text fx:id="totalEarningsText" styleClass="dashboard-earnings"/>
-                        <TableView fx:id="earningsTable" styleClass="dashboard-table">
-                            <columns>
-                                <TableColumn fx:id="monthColumn" text="Month" prefWidth="150"/>
-                                <TableColumn fx:id="earningsAmountColumn" text="Earnings (₱)" prefWidth="150"/>
-                            </columns>
-                        </TableView>
-                    </VBox>
+                    <content>
+                        <VBox spacing="10" styleClass="dashboard-card">
+                            <children>
+                                <Label fx:id="totalEarningsText" text="Total Earnings: ₱0.00" styleClass="dashboard-label"/>
+                                <TableView fx:id="earningsTable" styleClass="dashboard-table">
+                                    <columns>
+                                        <TableColumn fx:id="monthColumn" text="Month" prefWidth="150"/>
+                                        <TableColumn fx:id="earningsAmountColumn" text="Amount" prefWidth="150"/>
+                                    </columns>
+                                </TableView>
+                            </children>
+                            <padding>
+                                <Insets top="10" right="10" bottom="10" left="10"/>
+                            </padding>
+                        </VBox>
+                    </content>
                 </Tab>
             </tabs>
         </TabPane>
     </center>
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
 </BorderPane>
